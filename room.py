@@ -5,7 +5,7 @@ directions = ["North", "East", "South", "West"]
 link_table = [2, 3, 0, 1]
 
 class Room():
-    def __init__(self, room_name:str, init_desc:str, desc:str, you_move:str):
+    def __init__(self, room_name:str, init_desc:str, desc:str, you_move:str, enemy=None):
         """Room(Room name, initial entrance description, secondary entrance description,\
          generic movement script)"""
         self.name = room_name
@@ -16,6 +16,7 @@ class Room():
         self.desc = desc
         self.visited = False
         self.you_move = you_move
+        self.enemy = enemy
 
     def __repr__(self):
         return "Room({})".format(self.name)
@@ -48,4 +49,3 @@ class Room():
 
     def get_character(self):
         return self.character
-

@@ -1,6 +1,6 @@
 from room import Room
 from room_definitions import outside
-from weapons import unarmed
+from weapon_definitions import unarmed
 from item import Weapon
 from math import floor
 from random import randrange
@@ -46,8 +46,10 @@ class Character():
         elif dmg_type == self.resistance:
             print("{} is resistant to {}. Half damage!".format(self.name, damage_types[dmg_type]))
             dmg = floor(dmg/2)
+        dmg = 1 if dmg == 0 else dmg
         self.health -= dmg
         print("{} took {} damage.".format(self.name, str(dmg)))
+        print("{} health: {}".format(self.name, self.health))
         return True if self.health <= 0 else False
 
     def attack(self, target:'Character'):
@@ -61,7 +63,6 @@ class Character():
         else:
             if randrange(0, 100) <= weapon.hit_chance:
                 dmg = weapon.damage + randrange(-1, 1)
-                dmg = 1 if dmg == 0 else dmg
                 print("Hit!")
                 target.take_damage(dmg, weapon.damage_type)
                 return True
