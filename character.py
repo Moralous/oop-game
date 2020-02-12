@@ -2,8 +2,10 @@ from time import sleep
 from sys import stdout
 
 class Character():
-    def __init__(self, name):
+    def __init__(self, name, capacity):
         self.name = name
+        self.health = 10
+        self.capacity = capacity
 
     def __repr__(self):
         return "Character(\"{}\")".format(self.name)

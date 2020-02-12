@@ -1,6 +1,6 @@
-from room_definitions import *
+import rooms
 from character import Player, Enemy
-from random import choices
+from random import choice
 from utilities import slow_print
 from time import sleep
 
@@ -41,7 +41,8 @@ def handleInput(control):
         return False
 
 player = Player(input("What is your name, adventurer?:\n>"),
-                outside)
+                rooms.outside,
+                10)
 sleep(1)
 print("Ah...")
 sleep(2)
@@ -49,9 +50,14 @@ print("{}...".format(player.name))
 sleep(4)
 print("Good luck...")
 sleep(2)
+print("\n"*100)
 
-for n in range(10000):
-    print(''.join(choices(random_characters, k=100)))
+##string = ""
+##for i in range(50):
+##    string += "\n"
+##    for n in range(100):
+##        string += choice(random_characters)
+##print(string)
 
 print("\n"*4)
 
