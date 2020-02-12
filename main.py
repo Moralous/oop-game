@@ -20,7 +20,11 @@ last_sentence = ""
 
 def handleInput(control):
     """Handles a command. Returns True if the command is legal"""
-    if control == "help":
+    if control == "end":
+        global running
+        running = False
+        return True
+    elif control == "help":
         return False
     elif control[0:5].lower() == "move ":
         room = None
@@ -41,16 +45,21 @@ def handleInput(control):
         return False
 
 player = Player(input("What is your name, adventurer?:\n>"),
-                rooms.outside,
-                10)
-sleep(1)
-print("Ah...")
-sleep(2)
-print("{}...".format(player.name))
-sleep(4)
-print("Good luck...")
-sleep(2)
-print("\n"*100)
+                10,
+                rooms.outside)
+
+if player.name == "debug":
+    running = False
+
+if running:
+    sleep(1)
+    print("Ah...")
+    sleep(2)
+    print("{}...".format(player.name))
+    sleep(4)
+    print("Good luck...")
+    sleep(2)
+    print("\n"*100)
 
 ##string = ""
 ##for i in range(50):
