@@ -1,5 +1,5 @@
 import rooms
-from character import Player, Enemy
+from character import Character
 from random import choice
 from utilities import slow_print
 from time import sleep
@@ -14,6 +14,7 @@ control_string = "\nOptions:\nhelp - displays this message\
 
 break_string = "################################################"
 
+debug = True
 running = True
 last_sentence = ""
 
@@ -44,14 +45,12 @@ def handleInput(control):
         print("INVALID COMMAND")
         return False
 
-player = Player(input("What is your name, adventurer?:\n>"),
-                10,
-                rooms.outside)
+player = Character(input("What is your name, adventurer?:\n>"))
 
 if player.name == "debug":
     running = False
 
-if running:
+if running and not debug:
     sleep(1)
     print("Ah...")
     sleep(2)

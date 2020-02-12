@@ -1,4 +1,5 @@
 from room import Room
+from room_definitions import outside
 from weapons import unarmed
 from item import Weapon
 from math import floor
@@ -12,14 +13,17 @@ damage_types = [
 ]
 
 class Character():
-    def __init__(self, name:str, capacity:int, speech:str=""):
+    def __init__(self, name:str, capacity:int=10, speech:str="", health:int=10,
+                 equipped_weapon:Weapon=unarmed, resistance:int=None, weakness:int=None,
+                 starting_room:Room=outside):
         self.name = name
-        self.health = 10
         self.capacity = capacity
-        self.equipped_item = unarmed
-        self.resistance = None
-        self.weakness = None
         self.speech = speech
+        self.health = health
+        self.equipped_weapon = equipped_weapon
+        self.resistance = resistance
+        self.weakness = weakness
+        self.room = starting_room
 
     def __repr__(self):
         return "Character(\"{}\")".format(self.name)
@@ -29,6 +33,9 @@ class Character():
             print("{}: {}".format(self.name, self.speech))
         else:
             print("{} says nothing...".format(self.name))
+
+    def move(self, room:Room):
+        self.room = room
 
     def take_damage(self, dmg:int, dmg_type:int):
         """Handles weaknesses, resistances, and feedback. Returns True if the attack \
@@ -43,18 +50,24 @@ class Character():
         print("{} took {} damage.".format(self.name, str(dmg)))
         return True if self.health <= 0 else False
 
-    def attack(self, target:'Character', weapon:Weapon):
+    def attack(self, target:'Character'):
         """Instructs this character object to attack the target character with weapon."""
+        weapon = self.equipped_weapon
         dmg = weapon.damage
-        dmg_type = weapon.dmg_type
+        dmg_type = weapon.damage_type
         if target.health <= 0:
             print("{} is already dead!".format(target.name))
             return False
         else:
             if randrange(0, 100) <= weapon.hit_chance:
-                dmg = weapon.dmg + randrange(-1, 1)
+                dmg = weapon.damage + randrange(-1, 1)
+                dmg = 1 if dmg == 0 else dmg
                 print("Hit!")
-                target.take_damage(dmg, weapon.dmg_type)
+                target.take_damage(dmg, weapon.damage_type)
+                return True
+            else:
+                print("Miss!")
+                return False
 
 
     def death_animation(self):
@@ -62,18 +75,3 @@ class Character():
         print("\r o\n/|\\\n.|.\n\n\n")
         print("\r o\n/|\n_>\n\n\n")
         print("\r>->o\n    \- \"I am dead now...\"\n\n\n")
-
-
-class Player(Character):
-    def __init__(self, name:str, capacity:int, starting_room:Room):
-        super().__init__(name, capacity)
-        self.room = starting_room
-
-    def move(self, room:Room):
-        self.room = room
-
-
-class Enemy(Character):
-    def __init__(self, name:str, capacity:int, room:Room):
-        super().__init__(name, capacity)
-        self.room = room

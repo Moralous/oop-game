@@ -16,6 +16,6 @@ class Weapon(Item):
 3 = magic
 """
         super().__init__(name, description, weight)
-        self.dmg = dmg
-        self.dmg_type = dmg_type
+        self.damage = dmg
+        self.damage_type = dmg_type
         self.hit_chance = hit_chance
