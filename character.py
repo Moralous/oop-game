@@ -28,6 +28,8 @@ class Character():
 
         self.inventory = []
 
+        self.inventory = []
+
     def __repr__(self):
         return "Character(\"{}\")".format(self.name)
 
