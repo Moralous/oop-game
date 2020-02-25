@@ -10,9 +10,16 @@ from room_definitions import *
 
 # Character(name, capacity, attack_speech, health, weapon, resistance, weakness, home room)
 
-ghoul = Character("Ghoul", 10, "The ghoul screeches and swings at you!", 4, claws, 0, 1, central_hallway)
+ghoul = Character(name="Ghoul",capacity=10,speech="The ghoul screeches and swings at you!",
+                  health=4,resistance=0,weakness=1,starting_room=central_hallway,equipped_weapon=claws)
 central_hallway.enemy = ghoul
 
-haunted_kitchenware = Character("Chef's Apparition", 10, "The presence of a long-dead cook reigns over this kitchen.",
-                                6, hovering_knives, 2, 3, kitchen)
+haunted_kitchenware = Character(name="Chef's Apparition",capacity=10,
+                                speech="The presence of a long-dead cook reigns over this kitchen.",
+                                health=6,equipped_weapon=hovering_knives,resistance=2,weakness=3,
+                                starting_room=kitchen)
 kitchen.enemy = haunted_kitchenware
+
+animated_armour = Character(name="Animated Armour",capacity=10,speech=None,health=15,equipped_weapon=gauntlets,
+                            resistance=1,weakness=0,starting_room=western_hallway)
+western_hallway.enemy=western_hallway

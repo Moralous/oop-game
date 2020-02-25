@@ -1,5 +1,6 @@
 from room_definitions import *
 from enemy_definitions import *
+from weapon_definitions import *
 from character import Character
 from time import sleep
 
@@ -15,9 +16,10 @@ break_string = "################################################"
 
 debug = True  # Set to True to skip slow flavour text etc.
 alive = True
-current_enemy = None
 last_sentence = ""
-player = Character(input("What is your name, adventurer?:\n>"), starting_room=central_hallway)
+in_combat = False
+enemies_remaining = 3
+player = Character(input("What is your name, adventurer?:\n>"), starting_room=outside)
 
 
 def clear():
@@ -27,66 +29,92 @@ def clear():
 def handle_input(control):
     """Handles a command.
     Returns 0 if the command is illegal or "help".
-    Returns 1 if the command is legal and no further action needs to be taken.
-    Returns 2 if the player chooses to attack"""
+    Returns 1 for move
+    Returns 2 for attack
+    Returns 3 for use
+    Returns 4 for inventory
+    Returns 5 for die"""
     if control.lower() == "die":
         global alive
         alive = False
-        return 1
+        return 5
     elif control.lower() == "help":
         return 0
     elif control[0:5].lower() == "move ":
             destination = control[5:].lower()
             return handle_move(destination)
     elif control.lower() == "attack":
-        return handle_attack()
+        if not in_combat:
+            print("You swing your {} at thin air...".format(player.equipped_weapon.name.lower()))
+        return 2
+    elif control[0:4].lower() == "use ":
+        item_name = control[4:].lower()
+        item = None
+        for i in player.inventory:
+            if i.name.lower() == item_name:
+                item = i
+        if item is not None:
+            item.use(player)
+            return 3
+        else:
+            print("You search your pockets but cannot find {}...".format(item_name))
+            return 0
+    elif control[0:9].lower() == "inventory":
+        player.print_inventory()
+        return 4
     else:
         print("INVALID COMMAND")
         return 0
 
 
 def handle_move(destination):
-    if current_enemy is not None:
-        print("If you turn your back you'll die...")
+    room = None
+    current_room = player.room
+    linked_rooms = current_room.get_linked_rooms()
+    for r in linked_rooms:
+        if r[0].name.lower() == destination:
+            room = r[0]
+    if room is None:
+        print("INVALID ROOM")
+        print(player.room.print_movements())
+        return 0
+    else:
+        player.move(room)
         return 1
-    else:
-        room = None
-        current_room = player.room
-        linked_rooms = current_room.get_linked_rooms()
-        for r in linked_rooms:
-            if r[0].name.lower() == destination:
-                room = r[0]
-        if room is None:
-            print("INVALID ROOM")
-            return 0
-        else:
-            player.move(room)
-            return 1
 
 
-def handle_attack():
-    global current_enemy
-    print("You swing your {} at the {}.".format(player.equipped_weapon.name, current_enemy.name))
-    if current_enemy.health <= 0:
-        print("You slay the {}!".format(current_enemy.name))
-        end_combat()
-    else:
-        print("The {} still stands.".format(current_enemy.name))
-    return 2
+def combat_loop():
+    enemy = player.room.enemy
+    while enemy.health > 0:
+        print("The {} swipes at you with its {}.".format(enemy.name, enemy.equipped_weapon.name))
+        enemy.attack(player)
+        if player.health <= 0:
+            break
+
+        action = handle_input(input(">"))
+        while action == 0:
+            print(break_string)
+            print(control_string)
+            print(break_string)
+            action = handle_input(input(">"))
+        if action == 1:
+            print("The {} gets a glancing blow as you exit the room.".format(enemy.name))
+            print("You lose 1 health.{}".format("" if player.health <= 0 else
+                                                " You have {} health remaining...".format(player.health)))
+        elif action == 2:
+            print("You swipe at {} with your {}".format(enemy.name, player.equipped_weapon.name))
+            player.attack(enemy)
+            if enemy.health <= 0:
+                global enemies_remaining
+                enemies_remaining -= 1
+                player.room.enemy = None
+                print("The {} falls dead to the ground.".format(enemy.name))
+                print("There are now {} enemies remaining...".format(enemies_remaining))
+                break
 
 
-def begin_combat():
-    global last_sentence
-    last_sentence = ""
-    global current_enemy
-    current_enemy = player.room.enemy
-    print("COMBAT HAS BEGUN WITH {}".format(current_enemy.name.upper()))
 
 
-def end_combat():
-    global current_enemy
-    player.room.enemy = None
-    current_enemy = None
 
 
 if player.name == "debug":
@@ -117,19 +145,26 @@ while alive:
         print("The world fades from view, and the last thing you see is the floor rushing towards your head...\
         \n You have Died...")
     # Stores the last_sentence so that it can be re-printed without modifying game state
-    last_sentence = player.room.on_enter()
-    if player.room.enemy is not None: enemy_present = True
+    last_sentence, in_combat = player.room.on_enter()
     print(last_sentence)
-    if enemy_present: begin_combat()
-
-    if current_enemy is not None:
-        last_sentence = ""
-        current_enemy.speak()
-        current_enemy.attack(player)
+    if player.room.item is not None:
+        print("!!!!!\nYou find a {}, and pick it up.".format(player.room.item.name))
+        player.pick_up(item=player.room.item)
+        player.room.item = None
+    if in_combat:
+        enemy = player.room.enemy
+        print("COMBAT HAS BEGUN WITH {}".format(enemy.name.upper()))
+        enemy.speak()
+        combat_loop()
+        if player.health <= 0:  # Handles player death
+            alive = False
+            print("The world fades from view, and the last thing you see is the floor rushing towards your head...\
+            \n You have Died...")
 
     while handle_input(input(">")) == 0:  # As long as the player is dumb and inputs invalid commands, do not advance
         print(break_string)
         print(control_string)
         print(break_string)
         print(last_sentence)
+
     print(break_string)
