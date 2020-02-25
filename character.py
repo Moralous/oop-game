@@ -25,9 +25,6 @@ class Character():
         self.weakness = weakness
         self.room = starting_room
         self.attack_speech = attack_speech
-
-        self.inventory = []
-
         self.inventory = []
 
     def __repr__(self):
