@@ -1,6 +1,3 @@
-from time import sleep
-from sys import stdout
-
 directions = ["North", "East", "South", "West"]
 link_table = [2, 3, 0, 1]
 

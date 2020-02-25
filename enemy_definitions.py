@@ -1,5 +1,4 @@
 from character import Character
-from weapon_definitions import *
 from room_definitions import *
 
 # Damage types:

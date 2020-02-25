@@ -1,10 +1,6 @@
-from room_definitions import *
 from enemy_definitions import *
-from weapon_definitions import *
 from character import Character
 from time import sleep
-
-random_characters = "@#~`¬/‡†☼¶┼╞╟╚╔╩╦╠╬╧§#$%αßπΣΦΘΩδµτε∩⌠⌡¿þ\\"
 
 control_string = "\nOptions:\nhelp - displays this message\
 \nmove [room name] - move to an adjacent room\
@@ -14,16 +10,16 @@ control_string = "\nOptions:\nhelp - displays this message\
 
 break_string = "################################################"
 
-debug = True  # Set to True to skip slow flavour text etc.
+debug = False  # Set to True to skip slow flavour text etc.
 alive = True
 last_sentence = ""
 in_combat = False
-enemies_remaining = 1
+enemies_remaining = 3
 player = Character(input("What is your name, adventurer?:\n>"), starting_room=outside)
 
 
 def clear():
-    print("\n"*100)
+    print("\n"*250)
 
 
 def handle_input(control):
@@ -34,7 +30,7 @@ def handle_input(control):
     Returns 3 for use
     Returns 4 for inventory
     Returns 5 for die"""
-    if control.lower() == "die":
+    if control.lower() == "die" and debug:
         global alive
         alive = False
         return 5
@@ -129,14 +125,6 @@ if alive and not debug:
     sleep(4)
     print("Good luck...")
     sleep(2)
-    print("\n"*100)
-
-##string = ""
-##for i in range(50):
-##    string += "\n"
-##    for n in range(100):
-##        string += choice(random_characters)
-##print(string)
 
 clear()
 
