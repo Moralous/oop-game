@@ -1,5 +1,4 @@
 from room import Room
-from room_definitions import outside
 from weapon_definitions import unarmed
 from item import Weapon
 from math import floor
@@ -20,6 +19,7 @@ class Character():
         self.capacity = capacity
         self.speech = speech
         self.health = health
+        self.max_health = health
         self.equipped_weapon = equipped_weapon
         self.resistance = resistance
         self.weakness = weakness
@@ -73,6 +73,14 @@ class Character():
             else:
                 print("Miss!")
                 return False
+
+    def heal(self, amount):
+        self.health += amount
+        if self.health >= self.max_health:
+            self.health = self.max_health
+            print("You're back to full health.")
+        else:
+            print("You're now at {} health".format(target.health))
 
     def pick_up(self, item):
         print("You slip {} into your knapsack.".format(item.name))

@@ -24,4 +24,4 @@ pocket_knife = Weapon(name="Pocket Knife",description="Likely used for whittling
 claws = Weapon(name="Claws",description="They look sharp and terrifying.",weight=-1,dmg=2,dmg_type=1,hit_chance=65)
 hovering_knives = Weapon(name="Hovering Knives",description="They spin and slice through the air.",weight=-1,
                          dmg=3,dmg_type=1,hit_chance=80)
-gauntlets = Weapon(name="Steel Gauntlets",description="Pack a real punch.",weight=-1,dmg=3,dmg_type=0,hit_chance=80)
+gauntlets = Weapon(name="Steel Gauntlets",description="Pack a real punch.",weight=-1,dmg=1,dmg_type=0,hit_chance=90)

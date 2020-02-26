@@ -1,12 +1,14 @@
+from sys import stdout
+
 directions = ["North", "East", "South", "West"]
 link_table = [2, 3, 0, 1]
 
 class Room():
-    def __init__(self, room_name:str, init_desc:str, desc:str, you_move:str, enemy=None, item=None):
+    def __init__(self,room_name:str, init_desc:str, desc:str, you_move:str,
+                 enemy=None, item=None, room_art:str=""):
         """Room(Room name, initial entrance description, secondary entrance description,\
          generic movement script)"""
         self.name = room_name
-        self.description = None
         self.linked_rooms = []
         self.character = None
         self.init_desc = init_desc
@@ -15,11 +17,22 @@ class Room():
         self.you_move = you_move
         self.enemy = enemy
         self.item = item
+        self.room_art = room_art
 
     def __repr__(self):
-        return "Room({})".format(self.name)
+        variables = vars(self)
+        string = "Room("
+        for key, value in variables.items():
+            if type(value) == str:
+                string += "{}=\"{}\",".format(key, value)
+            else:
+                string += "{}={},".format(key, value)
+        string = string[:-1]
+        string += ")"
+        return string
 
     def on_enter(self):
+        print(self.room_art)
         print(self.you_move)
         string = self.init_desc if not self.visited else self.desc
         self.visited = True

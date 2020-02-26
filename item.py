@@ -8,7 +8,8 @@ class Item():
 
 
 class Weapon(Item):
-    def __init__(self, name, description, weight, dmg, dmg_type, hit_chance):
+    def __init__(self, name, description, weight:int=1, dmg, dmg_type,
+    hit_chance):
         """Damage types:
 0 = blunt
 1 = bladed
@@ -20,24 +21,21 @@ class Weapon(Item):
         self.damage_type = dmg_type
         self.hit_chance = hit_chance
 
-    def use(self, player):
+    def use(self, target):
         print("You equip the {}.".format(self.name))
-        player.equipped_weapon = self
+        target.equipped_weapon = self
 
 
 class Potion(Item):
-    def __init__(self, name, description, weight, size):
+    def __init__(self, name, description, weight:int=1, size:int=4,
+    use_text:str=""):
         super().__init__(name, description, weight)
         self.size = size
+        self.use_text = use_text
 
-    def use(self, player):
-        item_index = player.inventory.index(self)
-        player.inventory.pop(item_index)
+    def use(self, target):
+        item_index = target.inventory.index(self)
+        target.inventory.pop(item_index)
         print("You drink the potion and gain {} health...".format(self.size))
-        player.health += self.size
-        if player.health >= 10:
-            player.health = 10
-            print("You're back to full health.")
-        else:
-            print("You're now at {} health".format(player.health))
+        target.heal(self.size)
 

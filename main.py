@@ -1,4 +1,5 @@
 from enemy_definitions import *
+from room_definitions import outside
 from character import Character
 from time import sleep
 
@@ -14,8 +15,21 @@ debug = False  # Set to True to skip slow flavour text etc.
 alive = True
 last_sentence = ""
 in_combat = False
-enemies_remaining = 3
+
+hard_mode = False
+hard_mode_names = ["pete", "peter", "mrreid"]
+
+linear = True
+
+
+enemies_remaining = 3 if linear else None
 player = Character(input("What is your name, adventurer?:\n>"), starting_room=outside)
+
+if player.name.strip([" ","."]) in hard_mode_names:
+    hard_mode = True
+    print("You have chosen hard mode.")
+    sleep(2)
+    clear()
 
 
 def clear():
@@ -37,7 +51,7 @@ def handle_input(control):
     elif control.lower() == "help":
         return 0
     elif control[0:5].lower() == "move ":
-            destination = control[5:].lower()
+            destination = control[5:].lower().strip("'")
             return handle_move(destination)
     elif control.lower() == "attack":
         if not in_combat:
@@ -68,7 +82,7 @@ def handle_move(destination):
     current_room = player.room
     linked_rooms = current_room.get_linked_rooms()
     for r in linked_rooms:
-        if r[0].name.lower() == destination:
+        if r[0].name.lower().strip("'") == destination:
             room = r[0]
     if room is None:
         print("INVALID ROOM")
@@ -110,8 +124,12 @@ def combat_loop():
                 break
 
 
-
-
+def win_condition():
+    if linear:
+        return True if enemies_remaining == 0 else False
+    else:
+        if player.room.name == "The Final Room":
+            return True if player.room.enemy is None else False
 
 
 if player.name == "debug":
@@ -133,6 +151,7 @@ while alive:
         alive = False
         print("The world fades from view, and the last thing you see is the floor rushing towards your head...\
         \n You have Died...")
+        break
     # Stores the last_sentence so that it can be re-printed without modifying game state
     last_sentence, in_combat = player.room.on_enter()
     print(last_sentence)
@@ -150,7 +169,7 @@ while alive:
             print("The world fades from view, and the last thing you see is the floor rushing towards your head...\
             \n You have Died...")
 
-    if enemies_remaining == 0:
+    if win_condition():
         clear()
         sleep(1)
         clear()
